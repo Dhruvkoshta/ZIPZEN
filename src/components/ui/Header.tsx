@@ -35,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Settings className="h-5 w-5" />
           </Button>
           <Avatar>
-            <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+            <AvatarImage src="" alt="User" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
         </div>
