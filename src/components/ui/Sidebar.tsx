@@ -6,7 +6,7 @@ import { Progress } from "./progress"
 
 interface SidebarProps {
     sidebarCollapsed: boolean;
-    handleFolderClick: (folderId: string) => void;
+    handleFolderClick: (folderId: number) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -24,7 +24,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             <nav className="space-y-1">
-              <Button variant="ghost" className="w-full justify-start" onClick={() => handleFolderClick("root")}>
+              <Button variant="ghost" className="w-full justify-start" onClick={() => handleFolderClick(0)}>
                 <Home className="mr-2 h-4 w-4" />
                 My Drive
               </Button>

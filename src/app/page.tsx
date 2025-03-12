@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo } from "react"
+import React from "react"
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
@@ -28,17 +28,28 @@ import { Separator } from "@/components/ui/separator"
 import { useTheme } from "next-themes"
 // Mock data for files and folders
 // Mock file data
-import { mockFiles, mockFolders, getFileIcon } from "../mockData"
+import { mockFiles, mockFolders, getFileIcon, formatFileSize } from "../mockData"
 import { Sidebar } from "@/components/ui/Sidebar"
 import { Header } from "@/components/ui/Header"
 import { BreadcrumbComponent } from "@/components/ui/breadcrumb"
 
 // Helper function to get full path
-
-
+const buildPathArray = (currentFolderId: number): number[] => {
+  const paths: number[] = [];
+  let currentFolder = mockFolders.find(f => f.id === currentFolderId);
+  
+  while (currentFolder) {
+    paths.unshift(currentFolder.id);
+    currentFolder = currentFolder?.parent !== null ? 
+      mockFolders.find(f => f.id === currentFolder?.parent) : 
+      undefined;
+  }
+  
+  return paths;
+}
 
 export default function DriveUI() {
-  const [currentFolder, setCurrentFolder] = useState("root") // Start with root folder
+  const [currentFolder, setCurrentFolder] = useState(0) // Start with root folder (id: 0)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -49,21 +60,7 @@ export default function DriveUI() {
   useEffect(() => {
     setTheme("dark")
     setMounted(true)
-  }, [])
-
-  const breadcrumb = useMemo(() => {
-    const paths: string[] = [];
-    let newCurrentFolder = mockFolders.find(f => f.id === currentFolder);
-    
-    while (newCurrentFolder) {
-      paths.unshift(newCurrentFolder.id);
-      newCurrentFolder = newCurrentFolder.parent ? 
-        mockFolders.find(f => f.id === newCurrentFolder.parent) : 
-        undefined;
-    }
-    
-    return paths;
-  }, [currentFolder])
+  }, [setTheme])
 
   // Get current folder data
   const folder = mockFolders.find(f => f.id === currentFolder)
@@ -87,7 +84,7 @@ export default function DriveUI() {
   const folderContents = getFolderContents()
 
   // Handle folder click
-  const handleFolderClick = (folderId: string) => {
+  const handleFolderClick = (folderId: number) => {
     setCurrentFolder(folderId)
   }
 
@@ -132,7 +129,7 @@ export default function DriveUI() {
         {/* Main content */}
         <main className="flex-1 overflow-auto p-6">
           {/* Breadcrumbs */}
-          <BreadcrumbComponent pathArray={breadcrumb} mockData={Object.fromEntries(mockFolders.map(folder => [folder.id, { name: folder.name }]))} handleFolderClick={handleFolderClick} />
+          <BreadcrumbComponent pathArray={buildPathArray(currentFolder)} mockData={Object.fromEntries(mockFolders.map(folder => [folder.id, { name: folder.name }]))} handleFolderClick={handleFolderClick} />
 
           {/* Actions */}
           <div className="mb-4 flex items-center justify-between">
@@ -196,7 +193,9 @@ export default function DriveUI() {
                       <div className="flex h-40 flex-col items-center justify-center p-4 hover:bg-muted">
                         {getFileIcon(item.type)}
                         <div className="mt-2 text-center font-medium">{item.name}</div>
-                        <div className="mt-1 text-xs text-muted-foreground">{item.size}</div>
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          {formatFileSize(item.size)}
+                        </div>
                       </div>
                     </Link>
                   )}
@@ -230,7 +229,9 @@ export default function DriveUI() {
                       </Link>
                     )}
                   </div>
-                  <div className="col-span-2 text-sm text-muted-foreground">{!item.isFolder && 'size' in item && item.size}</div>
+                  <div className="col-span-2 text-sm text-muted-foreground">
+                    {!item.isFolder && 'size' in item && formatFileSize(item.size)}
+                  </div>
                   <div className="col-span-3 text-sm text-muted-foreground">{!item.isFolder && item.type}</div>
                   <div className="col-span-1 text-right">
                     <DropdownMenu>

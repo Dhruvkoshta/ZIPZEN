@@ -99,9 +99,9 @@ function BreadcrumbEllipsis({
 }
 
 interface BreadcrumbComponentProps {
-  pathArray: string[]
+  pathArray: number[]
   mockData: Record<string, { name: string }>
-  handleFolderClick: (id: string) => void
+  handleFolderClick: (id: number) => void
 }
 
 export const BreadcrumbComponent:React.FC<BreadcrumbComponentProps> = ({
@@ -115,7 +115,7 @@ export const BreadcrumbComponent:React.FC<BreadcrumbComponentProps> = ({
               <BreadcrumbList>
                 {pathArray.map((id, index) => {
                   const isLast = index === pathArray.length - 1
-                  const name = id === "root" ? "My Drive" : mockData[id]?.name || id
+                  const name = id === 0 ? "My Drive" : mockData[id]?.name || id
 
                   return (
                     <React.Fragment key={id}>

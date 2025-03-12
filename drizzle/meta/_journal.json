@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "singlestore",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "1",
+      "when": 1741506691671,
+      "tag": "0000_neat_alex_power",
+      "breakpoints": true
+    }
+  ]
+}
