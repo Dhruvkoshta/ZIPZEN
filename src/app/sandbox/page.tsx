@@ -1,5 +1,5 @@
-import { db } from "@/db"
-import { files, folders } from "@/db/schema";
+import { db } from "@/server/db"
+import { files, folders } from "@/server/db/schema";
 import { mockFiles,mockFolders } from "@/mockData"
 
 const SandboxPage = () => {

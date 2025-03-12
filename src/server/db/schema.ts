@@ -1,3 +1,4 @@
+import "server-only"
 import { integer, pgTable, varchar,index } from "drizzle-orm/pg-core";
 
 
