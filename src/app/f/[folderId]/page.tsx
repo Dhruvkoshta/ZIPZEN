@@ -16,7 +16,7 @@ async function getAllParents(folderId:number) {
         if(folder.length === 0) {
             throw new Error("Parent Folder not found")
         }
-        parent.push(folder[0])
+        parent.unshift(folder[0])
         currentFolder = folder[0].parent
        
     }

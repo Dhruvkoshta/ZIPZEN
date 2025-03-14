@@ -26,13 +26,11 @@ import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 
 import { useTheme } from "next-themes"
-// Mock data for files and folders
-// Mock file data
 import { getFileIcon, formatFileSize } from "../mockData"
 import { Sidebar } from "@/components/ui/Sidebar"
 import { Header } from "@/components/ui/Header"
 import { BreadcrumbComponent } from "@/components/ui/breadcrumb"
-import { FileType, FolderType, DriveItem } from "@/types/schema"
+import { FileType, FolderType } from "@/types/schema"
 import { usePathname,  } from "next/navigation"
 
 interface DriveUIProps {
@@ -53,7 +51,6 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
 
   // Set dark mode as default when component mounts
   useEffect(() => {
-    setTheme("dark")
     setMounted(true)
   }, [setTheme])
 
@@ -61,7 +58,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
   const folder = folders.find(f => Number(f.id) === currentFolder)
 
   // Get current folder contents including parent info
-  const getFolderContents = (): DriveItem[] => {
+  const getFolderContents = React.useMemo(() => {
     const currentFiles = files.filter(file => Number(file.parent) === currentFolder)
     const currentFolders = folders.filter(folder => Number(folder.parent) === currentFolder)
     
@@ -74,9 +71,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
       })),
       ...currentFiles.map(file => ({ ...file, isFolder: false as const }))
     ]
-  }
-
-  const folderContents = getFolderContents()
+  }, [files, folders, currentFolder])
 
   // Handle mock upload
   const handleUpload = () => {
@@ -119,7 +114,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
         {/* Main content */}
         <main className="flex-1 overflow-auto p-6">
           <BreadcrumbComponent 
-            pathArray={parents.map(folder => folder.id).reverse()} 
+            pathArray={parents.map(folder => folder.id)} 
             mockData={Object.fromEntries([
               [0, { name: "My Drive" }],
               ...parents.map(folder => [folder.id, { name: folder.name }])
@@ -173,7 +168,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
           {/* Files and folders */}
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {folderContents.map((item) => (
+              {getFolderContents.map((item) => (
                 <Card key={item.id} className="overflow-hidden">
                   {item.isFolder ? (
                     <Link
@@ -206,7 +201,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
                 <div className="col-span-1"></div>
               </div>
               <Separator />
-              {folderContents.map((item) => (
+              {getFolderContents.map((item) => (
                 <div key={item.id} className="grid grid-cols-12 items-center gap-2 p-3 hover:bg-muted">
                   <div className="col-span-6">
                     {item.isFolder ? (
