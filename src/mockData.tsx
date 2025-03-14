@@ -108,13 +108,8 @@ export const formatFileSize = (bytes: number): string => {
 }
 
 // Helper function to get file icon based on type
-export const getFileIcon = (type: string) => {
-  switch (type) {
-	case "pdf":
-	  return <FileText className="h-16 w-16 text-red-500" />;
-	case "image":
-	  return <ImageIcon className="h-16 w-16 text-green-500" />;
-	default:
+export const getFileIcon = () => {
+  
 	  return <File className="h-16 w-16 text-gray-500" />;
-  }
+ 
 }

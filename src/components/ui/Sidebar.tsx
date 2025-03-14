@@ -2,16 +2,17 @@ import { Home, Plus, Star, Trash } from "lucide-react"
 import { Button } from "./button"
 import { Separator } from "./separator"
 import { Progress } from "./progress"
+import Link from "next/link";
 
 
 interface SidebarProps {
     sidebarCollapsed: boolean;
-    handleFolderClick: (folderId: number) => void;
+  
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
     sidebarCollapsed,
-    handleFolderClick,
+    
 }) => {
   return (
     <aside className={`border-r transition-all duration-300 ${sidebarCollapsed ? "w-0 overflow-hidden" : "w-64"}`}>
@@ -24,10 +25,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             <nav className="space-y-1">
-              <Button variant="ghost" className="w-full justify-start" onClick={() => handleFolderClick(0)}>
+              <Link href="/">
+              <Button variant="ghost" className="w-full justify-start" >
                 <Home className="mr-2 h-4 w-4" />
                 My Drive
               </Button>
+              
+              </Link>
               <Button variant="ghost" className="w-full justify-start">
                 <Star className="mr-2 h-4 w-4" />
                 Starred

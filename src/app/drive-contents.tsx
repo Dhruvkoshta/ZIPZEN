@@ -33,14 +33,18 @@ import { Sidebar } from "@/components/ui/Sidebar"
 import { Header } from "@/components/ui/Header"
 import { BreadcrumbComponent } from "@/components/ui/breadcrumb"
 import { FileType, FolderType, DriveItem } from "@/types/schema"
+import { usePathname,  } from "next/navigation"
 
 interface DriveUIProps {
   files: FileType[];
   folders: FolderType[];
+  parents: FolderType[]; 
 }
 
-export default function DriveUI({ files, folders }: DriveUIProps) {
-  const [currentFolder, setCurrentFolder] = useState(0) // Start with root folder (id: 0)
+export default function DriveUI({ files, folders, parents }: DriveUIProps) {
+  const pathname = usePathname()
+  const folderId = pathname.split('/').pop() || '0'
+  const currentFolder = Number(folderId)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -64,35 +68,15 @@ export default function DriveUI({ files, folders }: DriveUIProps) {
     return [
       ...currentFolders.map(folder => ({
         ...folder,
-        isFolder: true,
+        isFolder: true as const,
         childCount: folders.filter(f => Number(f.parent) === Number(folder.id)).length +
                    files.filter(f => Number(f.parent) === Number(folder.id)).length
       })),
-      ...currentFiles.map(file => ({ ...file, isFolder: false }))
+      ...currentFiles.map(file => ({ ...file, isFolder: false as const }))
     ]
   }
 
   const folderContents = getFolderContents()
-
-// Helper function to get full path
-const buildPathArray = (currentFolderId: number): number[] => {
-  const paths: number[] = [];
-  let currentFolder = folders.find(f => Number(f.id) === currentFolderId);
-  
-  while (currentFolder) {
-    paths.unshift(Number(currentFolder.id));
-    currentFolder = currentFolder?.parent !== null ? 
-      folders.find(f => Number(f.id) === Number(currentFolder?.parent)) : 
-      undefined;
-  }
-  
-  return paths;
-}
-
-  // Handle folder click
-  const handleFolderClick = (folderId: number) => {
-    setCurrentFolder(folderId)
-  }
 
   // Handle mock upload
   const handleUpload = () => {
@@ -130,12 +114,17 @@ const buildPathArray = (currentFolderId: number): number[] => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <Sidebar sidebarCollapsed={sidebarCollapsed} handleFolderClick={handleFolderClick} />
+        <Sidebar sidebarCollapsed={sidebarCollapsed} />
 
         {/* Main content */}
         <main className="flex-1 overflow-auto p-6">
-          {/* Breadcrumbs */}
-          <BreadcrumbComponent pathArray={buildPathArray(currentFolder)} mockData={Object.fromEntries(folders.map(folder => [folder.id, { name: folder.name }]))} handleFolderClick={handleFolderClick} />
+          <BreadcrumbComponent 
+            pathArray={parents.map(folder => folder.id).reverse()} 
+            mockData={Object.fromEntries([
+              [0, { name: "My Drive" }],
+              ...parents.map(folder => [folder.id, { name: folder.name }])
+            ])}
+          />
 
           {/* Actions */}
           <div className="mb-4 flex items-center justify-between">
@@ -187,17 +176,17 @@ const buildPathArray = (currentFolderId: number): number[] => {
               {folderContents.map((item) => (
                 <Card key={item.id} className="overflow-hidden">
                   {item.isFolder ? (
-                    <div
+                    <Link
                       className="flex h-40 cursor-pointer flex-col items-center justify-center p-4 hover:bg-muted"
-                      onClick={() => handleFolderClick(Number(item.id))}
+                      href={`/f/${item.id}`}
                     >
                       <Folder className="h-16 w-16 text-blue-500" />
                       <div className="mt-2 text-center font-medium">{String(item.name)}</div>
-                    </div>
+                    </Link>
                   ) : (
                     <Link href={item.url} className="block">
                       <div className="flex h-40 flex-col items-center justify-center p-4 hover:bg-muted">
-                        {getFileIcon(item.type)}
+                        {getFileIcon()}
                         <div className="mt-2 text-center font-medium">{item.name}</div>
                         <div className="mt-1 text-xs text-muted-foreground">
                           {formatFileSize(item.size)}
@@ -221,16 +210,16 @@ const buildPathArray = (currentFolderId: number): number[] => {
                 <div key={item.id} className="grid grid-cols-12 items-center gap-2 p-3 hover:bg-muted">
                   <div className="col-span-6">
                     {item.isFolder ? (
-                      <div
+                      <Link
                         className="flex cursor-pointer items-center gap-2"
-                        onClick={() => handleFolderClick(Number(item.id))}
+                        href={`/f/${item.id}`}
                       >
                         <Folder className="h-5 w-5 text-blue-500" />
                         <span>{item.name}</span>
-                      </div>
+                      </Link>
                     ) : (
                       <Link href={item.url} className="flex items-center gap-2">
-                        {getFileIcon(item.type)}
+                        {getFileIcon()}
                         <span>{item.name}</span>
                       </Link>
                     )}
@@ -238,7 +227,7 @@ const buildPathArray = (currentFolderId: number): number[] => {
                   <div className="col-span-2 text-sm text-muted-foreground">
                     {!item.isFolder && 'size' in item && formatFileSize(item.size)}
                   </div>
-                  <div className="col-span-3 text-sm text-muted-foreground">{!item.isFolder && item.type}</div>
+                  <div className="col-span-3 text-sm text-muted-foreground">{!item.isFolder }</div>
                   <div className="col-span-1 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
+import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 
@@ -100,45 +101,42 @@ function BreadcrumbEllipsis({
 
 interface BreadcrumbComponentProps {
   pathArray: number[]
-  mockData: Record<string, { name: string }>
-  handleFolderClick: (id: number) => void
+  mockData: Record<string | number, { name: string }>
 }
 
-export const BreadcrumbComponent:React.FC<BreadcrumbComponentProps> = ({
+export const BreadcrumbComponent: React.FC<BreadcrumbComponentProps> = ({
   pathArray,
   mockData,
-  handleFolderClick,
 }) => {
   return (
     <div className="mb-4">
-            <Breadcrumb>
-              <BreadcrumbList>
-                {pathArray.map((id, index) => {
-                  const isLast = index === pathArray.length - 1
-                  const name = id === 0 ? "My Drive" : mockData[id]?.name || id
+      <Breadcrumb>
+        <BreadcrumbList>
+          {pathArray.map((id, index) => {
+            const isLast = index === pathArray.length - 1
+            const name = id === 0 ? "My Drive" : mockData[id]?.name || id
+            
 
-                  return (
-                    <React.Fragment key={id}>
-                      {index > 0 && <BreadcrumbSeparator />}
-                      {isLast ? (
-                        <BreadcrumbItem>
-                          <BreadcrumbPage>{name}</BreadcrumbPage>
-                        </BreadcrumbItem>
-                      ) : (
-                        <BreadcrumbItem>
-                          <BreadcrumbLink onClick={() => handleFolderClick(id)}>{name}</BreadcrumbLink>
-                        </BreadcrumbItem>
-                      )}
-                    </React.Fragment>
-                  )
-                })}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
+            return (
+              <React.Fragment key={id}>
+                {index > 0 && <BreadcrumbSeparator />}
+                <BreadcrumbItem>
+                  {isLast ? (
+                    <BreadcrumbPage>{name}</BreadcrumbPage>
+                  ) : (
+                    <Link href={`/f/${id}`} passHref legacyBehavior>
+                      <BreadcrumbLink>{name}</BreadcrumbLink>
+                    </Link>
+                  )}
+                </BreadcrumbItem>
+              </React.Fragment>
+            )
+          })}
+        </BreadcrumbList>
+      </Breadcrumb>
+    </div>
   )
 }
-
-
 
 export {
   Breadcrumb,
