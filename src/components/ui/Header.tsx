@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight, Moon, Settings, Sun } from "lucide-react"
 import { Button } from "./button"
 import { Input } from "./input"
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar"
+import { AuthComponent } from "./AuthComponent"
 
 interface HeaderProps {
     sidebarCollapsed: boolean;
@@ -16,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
     theme,
     toggleTheme,
 }) => {
+  
   return (
     <header className="flex h-16 items-center border-b px-4">
         <div className="flex items-center gap-2">
@@ -34,11 +35,9 @@ export const Header: React.FC<HeaderProps> = ({
           <Button variant="ghost" size="icon" className="rounded-full">
             <Settings className="h-5 w-5" />
           </Button>
-          <Avatar>
-            <AvatarImage src="" alt="User" />
-            <AvatarFallback>U</AvatarFallback>
-          </Avatar>
+          <AuthComponent />
         </div>
       </header>
   )
 }
+

@@ -1,8 +1,8 @@
-import type { files, folders } from "@/server/db/schema"
+import type { files_table, folders_table } from "@/server/db/schema"
 import { InferSelectModel } from "drizzle-orm"
 
-export type FileType = InferSelectModel<typeof files>
-export type FolderType = InferSelectModel<typeof folders>
+export type FileType = InferSelectModel<typeof files_table>
+export type FolderType = InferSelectModel<typeof folders_table>
 
 export interface FolderWithChildren extends FolderType {
   isFolder: true;

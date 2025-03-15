@@ -1,5 +1,4 @@
 "use client"
-
 import React from "react"
 
 import { useState, useEffect } from "react"
@@ -7,14 +6,12 @@ import Link from "next/link"
 import {
   Folder,
   FolderPlus,
-  Grid,
-  List,
+
   MoreVertical,
   Upload,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +40,6 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
   const pathname = usePathname()
   const folderId = pathname.split('/').pop() || '0'
   const currentFolder = Number(folderId)
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const { theme, setTheme } = useTheme()
@@ -127,22 +123,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
               <h2 className="text-2xl font-bold">{folder?.name?.toString()}</h2>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className={viewMode === "list" ? "bg-muted" : ""}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className={viewMode === "grid" ? "bg-muted" : ""}
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
+             
               <Button variant="outline" size="sm" onClick={handleUpload}>
                 <Upload className="mr-2 h-4 w-4" />
                 Upload
@@ -166,33 +147,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
           )}
 
           {/* Files and folders */}
-          {viewMode === "grid" ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {getFolderContents.map((item) => (
-                <Card key={item.id} className="overflow-hidden">
-                  {item.isFolder ? (
-                    <Link
-                      className="flex h-40 cursor-pointer flex-col items-center justify-center p-4 hover:bg-muted"
-                      href={`/f/${item.id}`}
-                    >
-                      <Folder className="h-16 w-16 text-blue-500" />
-                      <div className="mt-2 text-center font-medium">{String(item.name)}</div>
-                    </Link>
-                  ) : (
-                    <Link href={item.url} className="block">
-                      <div className="flex h-40 flex-col items-center justify-center p-4 hover:bg-muted">
-                        {getFileIcon()}
-                        <div className="mt-2 text-center font-medium">{item.name}</div>
-                        <div className="mt-1 text-xs text-muted-foreground">
-                          {formatFileSize(item.size)}
-                        </div>
-                      </div>
-                    </Link>
-                  )}
-                </Card>
-              ))}
-            </div>
-          ) : (
+          
             <div className="rounded-lg border">
               <div className="grid grid-cols-12 gap-2 p-3 font-medium text-muted-foreground">
                 <div className="col-span-6">Name</div>
@@ -242,7 +197,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
                 </div>
               ))}
             </div>
-          )}
+          
         </main>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { db } from "@/server/db"
-import { files, folders } from "@/server/db/schema";
+import { files_table, folders_table } from "@/server/db/schema";
 import { mockFiles,mockFolders } from "@/mockData"
 
 const SandboxPage = () => {
@@ -9,9 +9,9 @@ const SandboxPage = () => {
         <form action={async () => {
             "use server";
 
-            const folderInsert = await db.insert(folders).values(mockFolders)
+            const folderInsert = await db.insert(folders_table).values(mockFolders)
             console.log(folderInsert)
-            const fileInsert = await db.insert(files).values(mockFiles)
+            const fileInsert = await db.insert(files_table).values(mockFiles)
             console.log(fileInsert)
 
         }}>
