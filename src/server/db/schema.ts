@@ -1,24 +1,34 @@
-import "server-only"
+// import "server-only"
 import { integer, pgTable, text, timestamp, boolean, varchar, index, serial } from "drizzle-orm/pg-core";
 
 export const files_table = pgTable("files", {
   id: serial().primaryKey(),
+  ownerId: text("owner_id").notNull(),
   name: varchar({ length: 255 }).notNull(),
   size: integer().notNull(),
   parent: integer().notNull(),
-  url: varchar({ length: 255 }).notNull()
+  url: varchar({ length: 255 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 },
 (t) => {
-  return [index("parent_file_index").on(t.parent)]
+  return [
+    index("parent_file_index").on(t.parent), 
+    index("owner_file_index").on(t.ownerId)
+  ]
 }
 )
 export const folders_table = pgTable("folders", {
   id: serial().primaryKey(),
+  ownerId: text("owner_id").notNull(),
   name: varchar({ length: 255 }).notNull(),
-  parent: integer()
+  parent: integer(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 },
   (t) => {
-    return [index("parent_folder_index").on(t.parent)]
+    return [
+      index("parent_folder_index").on(t.parent),
+      index("owner_folder_index").on(t.ownerId)
+    ]
   }
 )
 

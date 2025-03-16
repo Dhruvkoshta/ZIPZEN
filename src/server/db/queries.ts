@@ -68,6 +68,7 @@ export const MUTATIONS = {
     }) {
         return await db.insert(fileSchema).values({
             ...input.file,
+            ownerId: input.userId
         })
     }
 }

@@ -36,6 +36,7 @@ interface DriveUIProps {
   files: FileType[];
   folders: FolderType[];
   parents: FolderType[]; 
+  currentFolderId:number
 }
 
 export default function DriveUI({ files, folders, parents }: DriveUIProps) {
@@ -118,6 +119,9 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
                 console.log("Upload complete",res)
                 navigate.refresh()
               }}
+              input={
+                {folderId:currentFolder}
+              }
               />
               
               <Button variant="outline" size="sm">

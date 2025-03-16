@@ -18,10 +18,11 @@ export default async function DriveClone(props:{
     const [files,folders,parents] = await Promise.all([
         QUERIES.getFiles(parsedFolderId),
         QUERIES.getFolders(parsedFolderId),
-        QUERIES.getAllParentsForFolders(parsedFolderId)
+        QUERIES.getAllParentsForFolders(parsedFolderId),
+        QUERIES.getFolderById(parsedFolderId)
     ])
 
   return (
-    <DriveUI files={files} folders={folders} parents={parents} />
+    <DriveUI files={files} folders={folders} parents={parents} currentFolderId={parsedFolderId} />
   )
 }
