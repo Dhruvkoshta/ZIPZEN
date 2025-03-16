@@ -1,6 +1,6 @@
 "use server"
-import DriveUI from "../../drive-contents"
-import { getAllParentsForFolders, getFiles, getFolders } from "@/server/db/queries"
+import DriveUI from "./drive-contents"
+import { QUERIES } from "@/server/db/queries"
 
 
 
@@ -16,8 +16,9 @@ export default async function DriveClone(props:{
 
 
     const [files,folders,parents] = await Promise.all([
-        getFiles(parsedFolderId),
-        getFolders(parsedFolderId),getAllParentsForFolders(parsedFolderId)
+        QUERIES.getFiles(parsedFolderId),
+        QUERIES.getFolders(parsedFolderId),
+        QUERIES.getAllParentsForFolders(parsedFolderId)
     ])
 
   return (

@@ -1,7 +1,17 @@
 import { ChevronLeft, ChevronRight, Moon, Settings, Sun } from "lucide-react"
 import { Button } from "./button"
 import { Input } from "./input"
-import { AuthComponent } from "./AuthComponent"
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
+import SignIn from "./Signin"
+import { authClient } from "@/lib/auth-client" 
+import { Signout } from "./Signout"
+
 
 interface HeaderProps {
     sidebarCollapsed: boolean;
@@ -16,6 +26,8 @@ export const Header: React.FC<HeaderProps> = ({
     theme,
     toggleTheme,
 }) => {
+  const {data: session} = authClient.useSession()
+  console.log(session)
   
   return (
     <header className="flex h-16 items-center border-b px-4">
@@ -35,7 +47,23 @@ export const Header: React.FC<HeaderProps> = ({
           <Button variant="ghost" size="icon" className="rounded-full">
             <Settings className="h-5 w-5" />
           </Button>
-          <AuthComponent />
+          <div className="flex items-center gap-4">
+      
+      {!session ? <SignIn/> :  (<DropdownMenu>
+        <DropdownMenuTrigger asChild>
+        <Avatar>
+            <AvatarImage src={session?.user?.image ?? ''} alt={session?.user?.name ?? ''} />
+            <AvatarFallback>{session?.user?.name?.[0] ?? '?'}</AvatarFallback>
+        </Avatar>
+        </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+                <Signout/>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>)   }             
+      
+    </div>
         </div>
       </header>
   )

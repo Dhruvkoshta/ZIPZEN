@@ -1,6 +1,22 @@
-import NextAuth from "next-auth"
-import GitHub from "next-auth/providers/github"
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "./server/db";
+import { users, sessions, accounts, verifications } from "./server/db/schema";
  
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [GitHub],
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+    schema: {
+      user: users,
+      session: sessions,
+      account: accounts,
+      verification: verifications
+    }
+  }),
+  socialProviders: {
+    github: {
+      clientId: process.env.AUTH_GITHUB_ID || '',
+      clientSecret: process.env.AUTH_GITHUB_SECRET || ''
+    }
+  },
 })

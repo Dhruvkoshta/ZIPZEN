@@ -8,7 +8,7 @@ import {
   FolderPlus,
 
   MoreVertical,
-  Upload,
+  
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -19,16 +19,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Progress } from "@/components/ui/progress"
+
 import { Separator } from "@/components/ui/separator"
 
 import { useTheme } from "next-themes"
-import { getFileIcon, formatFileSize } from "../mockData"
+import { getFileIcon, formatFileSize } from "@/mockData"
 import { Sidebar } from "@/components/ui/Sidebar"
 import { Header } from "@/components/ui/Header"
 import { BreadcrumbComponent } from "@/components/ui/breadcrumb"
 import { FileType, FolderType } from "@/types/schema"
-import { usePathname,  } from "next/navigation"
+import { usePathname, useRouter,  } from "next/navigation"
+import { UploadButton } from "@/components/uploadthing"
 
 interface DriveUIProps {
   files: FileType[];
@@ -40,7 +41,6 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
   const pathname = usePathname()
   const folderId = pathname.split('/').pop() || '0'
   const currentFolder = Number(folderId)
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -69,21 +69,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
     ]
   }, [files, folders, currentFolder])
 
-  // Handle mock upload
-  const handleUpload = () => {
-    setUploadProgress(0)
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev === null) return 0
-        if (prev >= 100) {
-          clearInterval(interval)
-          setTimeout(() => setUploadProgress(null), 1000)
-          return 100
-        }
-        return prev + 10
-      })
-    }, 300)
-  }
+
 
   // Toggle theme
   const toggleTheme = () => {
@@ -94,6 +80,8 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed)
   }
+
+  const navigate = useRouter()
 
   // Don't render theme-dependent UI until mounted to prevent hydration mismatch
   if (!mounted) return null
@@ -124,10 +112,12 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
             </div>
             <div className="flex items-center gap-2">
              
-              <Button variant="outline" size="sm" onClick={handleUpload}>
-                <Upload className="mr-2 h-4 w-4" />
-                Upload
-              </Button>
+              <UploadButton endpoint="imageUploader"
+              onClientUploadComplete={()=> {
+                navigate.refresh()
+              }}
+              />
+              
               <Button variant="outline" size="sm">
                 <FolderPlus className="mr-2 h-4 w-4" />
                 New Folder
@@ -135,16 +125,6 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
             </div>
           </div>
 
-          {/* Upload progress */}
-          {uploadProgress !== null && (
-            <div className="mb-4">
-              <div className="flex items-center justify-between text-sm">
-                <span>Uploading file...</span>
-                <span>{uploadProgress}%</span>
-              </div>
-              <Progress value={uploadProgress} className="h-2 mt-1" />
-            </div>
-          )}
 
           {/* Files and folders */}
           
