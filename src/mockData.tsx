@@ -1,4 +1,4 @@
-import { File, FileText, ImageIcon } from "lucide-react";
+import { File,  } from "lucide-react";
 
 export interface File {
   id: number;
@@ -107,9 +107,3 @@ export const formatFileSize = (bytes: number): string => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
-// Helper function to get file icon based on type
-export const getFileIcon = () => {
-  
-	  return <File className="h-16 w-16 text-gray-500" />;
- 
-}

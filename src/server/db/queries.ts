@@ -61,13 +61,13 @@ export const MUTATIONS = {
         file:{
             name:string,
             size:number,
-            url:string
+            url:string,
+            parent:number
         };
         userId:string
     }) {
         return await db.insert(fileSchema).values({
             ...input.file,
-            parent:0
         })
     }
 }

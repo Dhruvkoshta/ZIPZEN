@@ -4,6 +4,7 @@ import React from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
+  File,
   Folder,
   FolderPlus,
 
@@ -23,7 +24,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 
 import { useTheme } from "next-themes"
-import { getFileIcon, formatFileSize } from "@/mockData"
+import { formatFileSize } from "@/mockData"
 import { Sidebar } from "@/components/ui/Sidebar"
 import { Header } from "@/components/ui/Header"
 import { BreadcrumbComponent } from "@/components/ui/breadcrumb"
@@ -41,7 +42,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
   const pathname = usePathname()
   const folderId = pathname.split('/').pop() || '0'
   const currentFolder = Number(folderId)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -113,7 +114,8 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
             <div className="flex items-center gap-2">
              
               <UploadButton endpoint="imageUploader"
-              onClientUploadComplete={()=> {
+              onClientUploadComplete={(res)=> {
+                console.log("Upload complete",res)
                 navigate.refresh()
               }}
               />
@@ -149,8 +151,8 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
                       </Link>
                     ) : (
                       <Link href={item.url} className="flex items-center gap-2">
-                        {getFileIcon()}
-                        <span>{item.name}</span>
+                       <File className="h-5 w-5 text-gray-500" />
+                        <span>{item.name.substring(0, 20) + '...' }</span>
                       </Link>
                     )}
                   </div>

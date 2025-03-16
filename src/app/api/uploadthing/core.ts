@@ -27,18 +27,15 @@ export const ourFileRouter = {
       const user = await auth.api.getSession({
         headers: await headers() // you need to pass the headers object.
     })
-
       // If you throw, the user will not be able to upload
       if (!user) throw new UploadThingError("Unauthorized");
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      return { userId: user.user?.id };
+      return { userId: user.user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.userId);
-
-      console.log("file url", file.ufsUrl);
+     
 
       if (!metadata.userId) throw new Error("User ID is required");
       
@@ -47,6 +44,7 @@ export const ourFileRouter = {
             name: file.name,
             size: file.size,
             url: file.ufsUrl,
+            parent: 0
             },
         userId: metadata.userId,
         })
