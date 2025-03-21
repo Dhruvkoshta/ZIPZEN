@@ -31,6 +31,7 @@ import { BreadcrumbComponent } from "@/components/ui/breadcrumb"
 import { FileType, FolderType } from "@/types/schema"
 import { usePathname, useRouter,  } from "next/navigation"
 import { UploadButton } from "@/components/uploadthing"
+import { deleteFile, deleteFolder } from "@/server/actions"
 
 interface DriveUIProps {
   files: FileType[];
@@ -43,7 +44,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
   const pathname = usePathname()
   const folderId = pathname.split('/').pop() || '0'
   const currentFolder = Number(folderId)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -167,7 +168,7 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
                   <div className="col-span-1 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" className="cursor-pointer" size="icon">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -176,7 +177,17 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
                         <DropdownMenuItem>Rename</DropdownMenuItem>
                         <DropdownMenuItem>Move</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-500">Delete</DropdownMenuItem>
+                        <DropdownMenuItem 
+                        className="text-red-500"
+                        onClick={() => {
+                          if(item.isFolder){
+                            deleteFolder(item.id)
+                          } else {
+                            deleteFile(item.id)
+                          }
+                          // navigate.refresh()
+                        }}
+                        >Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
