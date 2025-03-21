@@ -25,6 +25,7 @@
     "next": "15.2.1",
     "next-themes": "^0.4.4",
     "postcss": "^8.5.3",
+    "posthog-js": "^1.232.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
