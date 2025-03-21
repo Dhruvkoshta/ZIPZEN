@@ -12,7 +12,7 @@ export default function SignIn() {
               <Button
                   variant="outline"
                   className={cn(
-                    " gap-2"
+                    " gap-2 cursor-pointer"
                   )}
                   onClick={async () => {
                     await signIn.social({
