@@ -6,6 +6,8 @@ import { files_table, folders_table } from "./db/schema"
 import { auth } from "@/auth"
 import { cookies, headers } from "next/headers"
 import { UTApi } from "uploadthing/server"
+import { MUTATIONS } from "./db/queries"
+import { revalidatePath } from "next/cache"
 
 const utApi = new UTApi()
 
@@ -61,3 +63,22 @@ export async function deleteFolder(folderId:number) {
    
     return {success: true}
 }
+export async function createFolder(name: string, parentId: number) {
+    const session = await auth.api.getSession({
+      headers: await headers()
+    })
+  
+    if (!session?.user) {
+      throw new Error("Unauthorized")
+    }
+  
+    await MUTATIONS.createFolder({
+      folder: {
+        name,
+        parent: parentId
+      },
+      userId: session.user.id
+    })
+  
+    revalidatePath('/f/[folderId]')
+  }

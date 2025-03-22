@@ -13,6 +13,9 @@ export const auth = betterAuth({
       verification: verifications
     }
   }),
+  emailAndPassword: {
+    enabled: true,
+},
   socialProviders: {
     github: {
       clientId: process.env.AUTH_GITHUB_ID || '',

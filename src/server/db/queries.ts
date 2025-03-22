@@ -94,7 +94,20 @@ export const MUTATIONS = {
             
         ])
 
-        return rootFolder
+        return rootId
+    },
+    createFolder: async function (input:{
+        folder:{
+            name:string,
+            parent:number
+        };
+        userId:string
+    }) {
+        return await db.insert(folderSchema).values({
+            ...input.folder,
+            ownerId: input.userId,
+            createdAt: new Date()
+        })
     }
     
 }

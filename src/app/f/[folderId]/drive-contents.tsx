@@ -6,7 +6,6 @@ import Link from "next/link"
 import {
   File,
   Folder,
-  FolderPlus,
 
   MoreVertical,
   
@@ -32,6 +31,8 @@ import { FileType, FolderType } from "@/types/schema"
 import { usePathname, useRouter,  } from "next/navigation"
 import { UploadButton } from "@/components/uploadthing"
 import { deleteFile, deleteFolder } from "@/server/actions"
+import { CreateFolderDialog } from "@/components/CreateFolderDialog"
+import { createFolder } from "@/server/actions"
 
 interface DriveUIProps {
   files: FileType[];
@@ -125,10 +126,12 @@ export default function DriveUI({ files, folders, parents }: DriveUIProps) {
               }
               />
               
-              <Button variant="outline" size="sm">
-                <FolderPlus className="mr-2 h-4 w-4" />
-                New Folder
-              </Button>
+              <CreateFolderDialog 
+                onSubmit={async (name) => {
+                  await createFolder(name, currentFolder)
+                  navigate.refresh()
+                }} 
+              />
             </div>
           </div>
 
