@@ -24,11 +24,14 @@ import { signIn } from "@/lib/auth-client";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
+	const router = useRouter();
 
 	return (
 		<Card className='max-w-md p-4'>
@@ -71,7 +74,29 @@ export default function SignIn() {
 						className='w-full'
 						disabled={loading}
 						onClick={async () => {
-							await signIn.email({ email, password });
+							await signIn.email({
+								email,
+								password,
+								callbackURL: "/drive",
+
+								fetchOptions: {
+									onResponse: () => {
+										setLoading(false);
+									},
+
+									onRequest: () => {
+										setLoading(true);
+									},
+
+									onError: (ctx) => {
+										toast.error(ctx.error.message);
+									},
+
+									onSuccess: async () => {
+										router.push("/drive");
+									},
+								},
+							});
 						}}
 					>
 						{loading ? <Loader2 size={16} className='animate-spin' /> : "Login"}
